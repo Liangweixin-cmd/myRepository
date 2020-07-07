@@ -56,5 +56,6 @@ public interface ClubInfoMapper extends BaseMapper<ClubInfo> {
     
   //俱乐部消费统计
     List<Map> queryClubOrder(Map paramMap);
-    
+
+    List<Map> queryClub_OCX(Map paramMap);
 }

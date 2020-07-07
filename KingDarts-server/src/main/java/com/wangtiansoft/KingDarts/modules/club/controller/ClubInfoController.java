@@ -378,6 +378,12 @@ public class ClubInfoController extends BaseController {
         Page<Map> page = clubInfoService.queryClubOrder(paramMap, pageBean);
         return new JQGirdPageResult(page);
     }
+    @RequestMapping(value = "/clubStatisticalDay",method = RequestMethod.GET)
+    @ResponseBody
+    public JQGirdPageResult clubStatisticalDay(@RequestParam Map<String, Object> paramMap, @ModelAttribute PageBean pageBean){
+        Page<Map> page = clubInfoService.queryClub_OCX(paramMap, pageBean);
+        return new JQGirdPageResult(page);
+    }
     
     //  编辑查看页面
     //@PreAuthorize("hasPermission('','_CLUBINFO:EDIT')")

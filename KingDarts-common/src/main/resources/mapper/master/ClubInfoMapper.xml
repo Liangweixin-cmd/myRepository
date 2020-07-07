@@ -64,8 +64,10 @@
     
     <select id="queryAccountClubInfoList" resultType="map">
         SELECT
-            dci.id, dci.cno, dci.cname, dci.agno, dci.ctype, dci.captain, dci.mobile, dci.telno, dci.email, dci.qq, dci.resum, dci.incomes, dci.expends, dci.clubintr, dci.c_password, dci.activate_flag, dci.commnets, dci.add_time, dci.update_time, dci.isvalid, dci.logo, dci.version, dci.describe_message,dci.acac
-        FROM darts_club_info as dci
+            dci.id, dci.cno, dci.cname, dci.agno, dci.ctype, dci.captain, dci.mobile, dci.telno, dci.email, dci.qq, dci.resum,
+            dci.incomes, dci.expends, dci.clubintr, dci.c_password, dci.activate_flag, dci.commnets, dci.add_time, dci.update_time,
+            dci.isvalid, dci.logo, dci.version, dci.describe_message,dci.acac ,dcp.province
+        FROM darts_club_info as dci left join darts_club_place dcp on dci.cno = dcp.cno
         WHERE  (dci.agno is null or dci.agno = '')
             <if test="cname != null and cname != ''">
                 AND dci.cname like concat('%', #{cname}, '%')
@@ -219,4 +221,22 @@
             ORDER BY ${orderSql}
         </if>
 	</select>
+
+    <select id="queryClub_OCX" resultType="map">
+        select dci.cname cname,dai.agname agname,count(dgo.id) AS count,dci.cno AS cno,null AS dayRecharge,null AS consume
+	    from darts_game_order dgo left join darts_club_info dci on dgo.auth_no=dci.cno
+														left join darts_agent_info dai on dci.agno=dai.agno
+        where TO_DAYS(dgo.order_time)=TO_DAYS(NOW()) group by dgo.auth_no
+        union
+        select dci.cname cname,dai.agname agname,null AS count,dci.cno AS cno,SUM(amount) AS dayRecharge,null AS consume
+	    from darts_commission dc left join darts_club_info dci on dc.cno=dci.cno
+							     left join darts_agent_info dai on dai.agno=dc.agno
+        where TO_DAYS(pay_time)=TO_DAYS(NOW()) group by dc.cno
+        union
+        select dci.cname cname,dai.agname agname,null AS count,dci.cno AS cno,null AS dayRecharge,SUM(amount) AS consume
+	    from darts_user_balance dub left join darts_equ_auth dea on dub.equno=dea.equno
+								    left join darts_club_info dci on dea.auth_no=dci.cno
+									left join darts_agent_info dai on dai.agno=dea.auth_no
+        where dub.type=2 and TO_DAYS(log_time)=TO_DAYS(NOW()) group by dci.cno
+    </select>
 </mapper>

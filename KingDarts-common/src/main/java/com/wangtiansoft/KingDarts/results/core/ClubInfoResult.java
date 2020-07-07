@@ -46,16 +46,24 @@ public class ClubInfoResult extends BaseResult implements Serializable{
     private BigDecimal companyscale;//公司分成比例
     private BigDecimal clubscale;//俱乐部分成比例
     private Integer acac;
+    private String province;
     
     private List<ClubPlaceResult> clubPlaceResultList;//营业场所
     
     private List<EquAuthResult> equAuthResultList;//设备授权
     
     private File logofile;//logo文件
-    
 
-    
-	public File getLogofile() {
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public File getLogofile() {
 		return logofile;
 	}
 

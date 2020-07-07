@@ -62,7 +62,13 @@ public interface GameClientService {
 	 */
 	NettyMessage pushHitData(Map params, SocketChannel channel);
 
-	
+	/**
+	 * 约战双方交换信息*/
+	NettyMessage  exchangeHitData(final Map params,final SocketChannel channel);
+
+
+	NettyMessage  exchangeHitData0(final Map params,final SocketChannel channel);
+
 	/**
 	 * 对战结束发红包连接
 	 * @param params

@@ -46,6 +46,11 @@ public class AdminController extends BaseController {
         return "/a/login";
     }
 
+    @RequestMapping("/permission/permission_list")
+    public String permission(){
+        return "/a/auth/permission_list";
+    }
+
     @RequestMapping(value = "logout")
     public String logout() {
         return "redirect:/a/login";

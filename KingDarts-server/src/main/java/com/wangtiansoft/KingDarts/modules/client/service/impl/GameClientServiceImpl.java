@@ -3,12 +3,7 @@ package com.wangtiansoft.KingDarts.modules.client.service.impl;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -199,7 +194,7 @@ public class GameClientServiceImpl extends BaseService implements GameClientServ
 					throw new AppRuntimeException(Constants.kCode_OrderPayStatusFail,"订单支付 错误");
 				}
 
-				//如果游戏是网络对账，自动匹配
+				//如果游戏是网络对战，自动匹配
 				if(GameUtil.isNetGame(gameOrder.getGame_code())){
 					//判断用户当前是否有约战,且游戏编码与约战游戏编码相同
 					ChallengeResult challenge = challengeService.getUserChallenge(gameOrder.getUser_id(), new Date());
@@ -422,6 +417,86 @@ public class GameClientServiceImpl extends BaseService implements GameClientServ
 		return result;
 	}
 
+	@Override
+	public NettyMessage exchangeHitData(final Map params,final SocketChannel channel) {
+		final String id = channel.id().asShortText();
+		final NettyMessage result = this.buildAuthResponse(id,new IEResponseHandler() {
+			@Override
+			public Object execute(String equno) throws Exception {
+				//查询约战设备编号
+				Object targetEquno = params.get("equno");
+				if(targetEquno == null){
+					throw new AppRuntimeException("无匹配设备");
+				}
+				String taEquno = targetEquno.toString().replaceAll("[^0-9a-zA-Z\u4e00-\u9fa5.，,。？“”]+","");
+				String [] taEqunos = taEquno.split(",");
+
+				List<String> list=Arrays.asList(taEqunos);
+				//查看集合
+				for (int i = 0; i < list.size(); i++) {
+					System.out.println(list.get(i));
+					SocketChannel targetChannel = getSocketChannel(list.get(i));
+					targetChannel.writeAndFlush(getSendHit(params)+"\n");
+				}
+
+				Map<String,Object> data = new HashMap<>();
+				data.put("target_equno", targetEquno);
+
+				Map<String,Object> map = new HashMap<>();
+				map.put("code", com.wangtiansoft.KingDarts.config.netty.constants.Constants.code_Success);
+				map.put("type", com.wangtiansoft.KingDarts.config.netty.constants.Constants.message_type_hit);
+				map.put("msg", "推送成功");
+				map.put("data", data);
+				channel.writeAndFlush(JSON.toJSONString(map)+"\n");
+
+				Map<String,String> result = new HashMap<>();
+				map.put("msg", "支付成功");
+				return result;
+			}
+		});
+		return result;
+	}
+
+	@Override
+	public NettyMessage exchangeHitData0(final Map params,final SocketChannel channel) {
+		final String id = channel.id().asShortText();
+		final NettyMessage result = this.buildAuthResponse(id,new IEResponseHandler() {
+			@Override
+			public Object execute(String equno) throws Exception {
+				//查询约战设备编号
+				Object targetEquno = params.get("equno");
+				if(targetEquno == null){
+					throw new AppRuntimeException("无匹配设备");
+				}
+
+				String taEquno = targetEquno.toString().replaceAll("[^0-9a-zA-Z\u4e00-\u9fa5.，,。？“”]+","");
+				String [] taEqunos = taEquno.split(",");
+				List<String> list=Arrays.asList(taEqunos);
+				//查看集合
+				for (int i = 0; i < list.size(); i++) {
+					System.out.println(list.get(i));
+					SocketChannel targetChannel = getSocketChannel(list.get(i));
+					targetChannel.writeAndFlush(getAcceptHit(params)+"\n");
+				}
+
+				Map<String,Object> data = new HashMap<>();
+				data.put("target_equno", targetEquno);
+
+				Map<String,Object> map = new HashMap<>();
+				map.put("code", com.wangtiansoft.KingDarts.config.netty.constants.Constants.code_Success);
+				map.put("type", com.wangtiansoft.KingDarts.config.netty.constants.Constants.message_type_hit);
+				map.put("msg", "推送成功");
+				map.put("data", data);
+				channel.writeAndFlush(JSON.toJSONString(map)+"\n");
+
+				Map<String,String> result = new HashMap<>();
+				map.put("msg", "支付成功");
+				return result;
+			}
+		});
+		return result;
+	}
+
 	public SocketChannel getSocketChannel(String equno){
 		Object obj = redisTemplate.opsForHash().get(Constants.online_channel, equno);
 		if(obj==null){
@@ -454,6 +529,21 @@ public class GameClientServiceImpl extends BaseService implements GameClientServ
 		return JSON.toJSONString(map);
 	}
 
+	private String getSendHit(Map data) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("code", com.wangtiansoft.KingDarts.config.netty.constants.Constants.code_Success);
+		map.put("type", com.wangtiansoft.KingDarts.config.netty.constants.Constants.message_type_hit_accept);
+		map.put("data", data);
+		return JSON.toJSONString(map);
+	}
+
+	private String getAcceptHit(Map data) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("code", com.wangtiansoft.KingDarts.config.netty.constants.Constants.code_Success);
+		map.put("type", com.wangtiansoft.KingDarts.config.netty.constants.Constants.message_type_hit_send);
+		map.put("data", data);
+		return JSON.toJSONString(map);
+	}
 
 //	@Override
 //	红包接口

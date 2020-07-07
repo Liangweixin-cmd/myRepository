@@ -389,10 +389,15 @@ public class Constants {
     public static final String message_type_orderstart = "orderstart";	//游戏开始
     public static final String message_type_orderresults = "orderresults";	//游戏结束
     public static final String message_type_hit = "hit";	//网络游戏飞镖数据推送
-    
+
     public static final String message_type_startpush = "startpush";	//游戏开始推送
     public static final String message_type_hitpush = "hitpush";	//网络游戏飞镖数据推送
-    public static final String message_type_packets = "packets";	//网络发送红包
+
+	public static final String message_type_hit_send = "hit_send";	//发送投镖数据
+	public static final String message_type_hit_accept = "hit_accept";	//接受投镖的数据
+
+	public static final String message_type_packets = "packets";	//网络发送红包
+
     
 	public static List<String> getStringListUrl() {
 		return stringListUrl;

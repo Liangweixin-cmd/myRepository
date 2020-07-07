@@ -60,5 +60,8 @@ public interface ClubInfoService extends IBaseService<ClubInfo, Integer> {
 
     //俱乐部消费统计
 	Page<Map> queryClubOrder(Map paramMap, PageBean pageBean);
+
+	//統計俱樂部日擊打、充值、消費
+    Page<Map> queryClub_OCX (Map paramMap, PageBean pageBean);
 }
 

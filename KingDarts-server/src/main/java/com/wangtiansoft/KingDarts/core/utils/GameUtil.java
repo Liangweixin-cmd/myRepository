@@ -27,7 +27,7 @@ public class GameUtil {
 	public static String[] netNames = {"301","501","701","米老鼠","高分赛","红心王","拳王格斗","21点","打气球"};//网络对战名称
 
 	/**
-	 * 计算不通模式下订单金额
+	 * 计算不同模式下订单金额
 	 * @param game_mode 1单人，2双人，3三人，4四人，5双人赛2V2，6三人赛3V3，7网络1V1
 	 * @return
 	 */
@@ -46,6 +46,8 @@ public class GameUtil {
 		case 6:
 			return price.multiply(new BigDecimal(game_mode));
 		case 7:
+			return price;
+		case 8:
 			return price;
 		default:
 			throw new AppRuntimeException("游戏类型错误");

@@ -198,7 +198,7 @@ public class BaseService {
 				
 				redisTemplate.boundValueOps(Constants.channel_unlogin+id).set(outTimeNum, Constants.channel_unlogin_time, TimeUnit.SECONDS);
 				
-				throw new AppRuntimeException(Constants.kCode_SessionError,"通道未登录121");
+			//	throw new AppRuntimeException(Constants.kCode_SessionError,"通道未登录121");
 			}
 			Object data = invokeInterface.execute(equnoObj.toString());
 			return NettyMessage.success(data);

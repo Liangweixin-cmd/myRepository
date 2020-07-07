@@ -232,4 +232,30 @@ public class ClubInfoServiceImpl extends BaseService<ClubInfo, Integer> implemen
         PageHelper.startPage(pageBean.getPage(), pageBean.getRows());
         return (Page<Map>) clubInfoMapper.queryClubOrder(paramMap);
     }
+
+    public Page<Map> queryClub_OCX(Map paramMap, PageBean pageBean){
+		paramMap.put(SQLUtil.SQL_OrderSQL, SQLUtil.orderByCondition(pageBean));
+		PageHelper.startPage(pageBean.getPage(), pageBean.getRows());
+		Page<Map> resultMap =(Page<Map>) clubInfoMapper.queryClub_OCX(paramMap);
+		for(int i=resultMap.size()-1;i>0;i--){
+			Map map = resultMap.get(i);
+			for(int j=i-1;j>=0;j--){
+				Map map0 = resultMap.get(j);
+				if(null != map.get("cno")){
+					if(map.get("cno").equals(map0.get("cno"))){
+						map0.putAll(map);
+						map.clear();
+					}
+				}
+			}
+		}
+		Iterator<Map> iterator = resultMap.iterator();
+		while(iterator.hasNext()){
+			if(iterator.next().size()==0){
+				iterator.remove();
+			}
+		}
+		resultMap.setTotal(resultMap.size());
+		return resultMap;
+	}
 }

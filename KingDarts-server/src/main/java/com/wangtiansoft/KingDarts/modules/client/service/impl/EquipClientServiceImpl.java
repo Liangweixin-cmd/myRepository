@@ -59,10 +59,10 @@ public class EquipClientServiceImpl extends BaseService implements EquipClientSe
 				}
 				
 				Object obj = redisTemplate.opsForHash().get(Constants.online_channel, equno);
-				if(obj!=null){
+				/*if(obj!=null){
 					log.info(equno+" 设备已登录");
 					throw new AppRuntimeException(Constants.kCode_HasLogin, "设备已登录，不能重复登录");
-				}
+				}*/
 				//判断设备是否存在
 				EquInfoResult equInfo = equInfoService.getEquInfoResultByNo(equno);
 				if(equInfo==null) {
